@@ -1,51 +1,47 @@
 from networktables import NetworkTables
-from flask import Flask, render_template, request
+from flask import Flask, request
 from flask_socketio import SocketIO
-from threading import Lock
 from datetime import datetime
 from random import random
-thread = None
-thread_lock = Lock()
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
+NetworkTables.initialize(server="10.96.11.2")
+
+sd = NetworkTables.getTable("datatable")
+
+from routes import *
 
 def get_current_datetime():
     now = datetime.now()
     return now.strftime("%m/%d/%Y %H:%M:%S")    
 
-def main():
-    NetworkTables.initialize(server="10.96.11.2")
-    print(NetworkTables._tables)
 
-    app.run()
-    socketio.run(app)
-
-# home
-@app.route("/")
-def home():
-    return render_template('index.html')
-
-def background_thread():
-    print("Updating data")
+def onUpdate(table, key, value, isNew):
+    print("valueChanged: key: '%s'; value: %s; isNew: %s" % (key, value, isNew))
     while True:
-        socketio.emit('updateData', {'value': (NetworkTables.getTable("SmartDashboard").getNumber("Motor-Shooter Esquerdo",0) * 100), "date": get_current_datetime()})
+        socketio.emit('updateData', {key: value, "date": get_current_datetime()})
         socketio.sleep(1)
+
 
 @socketio.on('connect')
 def connect():
     global thread
     print('Client connected')
 
-    global thread
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_thread)
-
 @socketio.on('disconnect')
 def disconnect():
     print('Client disconnected',  request.sid)
+
+
+def main():
+    sd.addEntryListener(onUpdate)
+    app.run()
+    socketio.run(app, allow_unsafe_werkzeug=True)
 
 if __name__ == "__main__":
     main() 
