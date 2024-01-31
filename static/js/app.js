@@ -1,10 +1,10 @@
 $(document).ready(function () {
-    const ctx = document.getElementById("myChart").getContext("2d");
+    const ctx = document.getElementById("chart-shooter").getContext("2d");
   
-    const myChart = new Chart(ctx, {
+    const chartShooter = new Chart(ctx, {
       type: "line",
       data: {
-        datasets: [{ label: "Temperature",  }],
+        datasets: [{ label: "Motor-Shooter Esquerdo",  }],
       },
       options: {
         borderWidth: 3,
@@ -13,16 +13,16 @@ $(document).ready(function () {
     });
   
     function addData(label, data) {
-      myChart.data.labels.push(label);
-      myChart.data.datasets.forEach((dataset) => {
+      chartShooter.data.labels.push(label);
+      chartShooter.data.datasets.forEach((dataset) => {
         dataset.data.push(data);
       });
-      myChart.update();
+      chartShooter.update();
     }
   
     function removeFirstData() {
-      myChart.data.labels.splice(0, 1);
-      myChart.data.datasets.forEach((dataset) => {
+      chartShooter.data.labels.splice(0, 1);
+      chartShooter.data.datasets.forEach((dataset) => {
         dataset.data.shift();
       });
     }
@@ -34,10 +34,10 @@ $(document).ready(function () {
   
     //receive details from server
     socket.on("updateData", function (msg) {
-      console.log("Received sensorData :: " + msg.date + " :: " + msg.value);
+      console.log("Received data :: " + msg.date + " :: " + msg.value);
   
       // Show only MAX_DATA_COUNT data
-      if (myChart.data.labels.length > MAX_DATA_COUNT) {
+      if (chartShooter.data.labels.length > MAX_DATA_COUNT) {
         removeFirstData();
       }
       addData(msg.date, msg.value);

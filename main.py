@@ -28,10 +28,9 @@ def home():
     return render_template('index.html')
 
 def background_thread():
-    print("Generating random sensor values")
+    print("Updating data")
     while True:
-        dummy_sensor_value = round(random() * 100, 3)
-        socketio.emit('updateData', {'value': dummy_sensor_value, "date": get_current_datetime()})
+        socketio.emit('updateData', {'value': (NetworkTables.getTable("SmartDashboard").getNumber("Motor-Shooter Esquerdo") * 100), "date": get_current_datetime()})
         socketio.sleep(1)
 
 @socketio.on('connect')
