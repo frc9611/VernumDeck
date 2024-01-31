@@ -13,6 +13,11 @@ $(document).ready(function () {
     });
   
     function addData(label, data) {
+
+      let kv = data.split("::")
+      let k = kv[0]
+      let v = kv[1]
+
       chartShooter.data.labels.push(label);
       chartShooter.data.datasets.forEach((dataset) => {
         dataset.data.push(data);
