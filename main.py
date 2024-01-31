@@ -30,7 +30,7 @@ def home():
 def background_thread():
     print("Updating data")
     while True:
-        socketio.emit('updateData', {'value': (NetworkTables.getTable("SmartDashboard").getNumber("Motor-Shooter Esquerdo") * 100), "date": get_current_datetime()})
+        socketio.emit('updateData', {'value': (NetworkTables.getTable("SmartDashboard").getNumber("Motor-Shooter Esquerdo",0) * 100), "date": get_current_datetime()})
         socketio.sleep(1)
 
 @socketio.on('connect')
