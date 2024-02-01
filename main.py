@@ -22,9 +22,8 @@ def get_current_datetime():
 
 
 def onUpdate(table, key, value, isNew):
-    if True:
-        # print("valueChanged: key: '%s'; value: %s; isNew: %s" % (key, value, isNew))
-        socketio.emit('updateData', {"kv": str(key) + "::" + str(value), "date": get_current_datetime()})
+    # print("valueChanged: key: '%s'; value: %s; isNew: %s" % (key, value, isNew))
+    socketio.emit('updateData', {"kv": str(key) + "::" + str(value), "date": get_current_datetime()})
 
 
 @socketio.on('connect')
